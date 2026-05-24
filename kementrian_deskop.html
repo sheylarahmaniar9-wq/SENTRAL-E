@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENTRAL-E National Command Center - Sisi Hilir 3T</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #334155; border-radius: 4px; }
+        .glow-red { box-shadow: 0 0 15px rgba(239, 68, 68, 0.2); }
+    </style>
+</head>
+<body class="bg-[#0b1329] text-slate-100 font-sans antialiased min-h-screen flex flex-col">
+
+    <header class="bg-[#111c44] border-b border-slate-800 px-6 py-4 flex justify-between items-center shadow-lg">
+        <div class="flex items-center space-x-3">
+            <div class="bg-indigo-600 p-2 rounded-xl text-xl animate-pulse">🛰️</div>
+            <div>
+                <h1 class="text-base font-black tracking-wider text-white">SENTRAL-E NATIONAL COMMAND CENTER</h1>
+                <p class="text-[11px] text-indigo-400 font-medium">Sisi Hilir Intervensi Otomatis & Big Data Wilayah 3T</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-6 text-xs">
+            <div class="bg-slate-900 border border-slate-700 rounded-full px-4 py-1.5 flex items-center space-x-2">
+                <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
+                <span class="font-bold text-slate-300">Pusat Data Kemenristekdikbud Terhubung</span>
+            </div>
+            <div class="text-right">
+                <span class="text-slate-400 block text-[10px] uppercase font-bold">Koneksi Server</span>
+                <span class="font-mono font-bold text-indigo-400">GATEWAY-PROD-Z</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+        
+        <aside class="w-64 bg-[#111c44] border-r border-slate-800 p-4 flex flex-col justify-between">
+            <div class="space-y-6">
+                <div>
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2">Sektor Integrasi</span>
+                    <nav class="space-y-1">
+                        <button onclick="filterSektor('ALL')" class="w-full flex items-center space-x-3 bg-indigo-600/20 text-indigo-400 p-2.5 rounded-xl font-bold text-xs border border-indigo-500/30 transition">
+                            <span>📊</span> <span>Konsolidasi Nasional</span>
+                        </button>
+                        <button onclick="filterSektor('KEMENDIKBUD')" class="w-full flex items-center space-x-3 hover:bg-slate-800 text-slate-400 hover:text-slate-200 p-2.5 rounded-xl text-xs font-semibold transition">
+                            <span>🏫</span> <span>Kemendikbudristek</span>
+                        </button>
+                        <button onclick="filterSektor('KEMENSOS')" class="w-full flex items-center space-x-3 hover:bg-slate-800 text-slate-400 hover:text-slate-200 p-2.5 rounded-xl text-xs font-semibold transition">
+                            <span>🤝</span> <span>Kementerian Sosial</span>
+                        </button>
+                        <button onclick="filterSektor('KEMENKEU')" class="w-full flex items-center space-x-3 hover:bg-slate-800 text-slate-400 hover:text-slate-200 p-2.5 rounded-xl text-xs font-semibold transition">
+                            <span>💳</span> <span>Kementerian Keuangan</span>
+                        </button>
+                    </nav>
+                </div>
+
+                <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-800">
+                    <span class="text-[9px] font-bold text-amber-500 uppercase tracking-wider block mb-1">📡 LIVE SYNC STREAM</span>
+                    <div id="live-stream-log" class="text-[10px] font-mono text-slate-400 space-y-1.5 max-h-40 overflow-y-auto custom-scrollbar">
+                        <p class="text-slate-500">[08:22:11] Waiting handshake...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-[10px] text-slate-500 text-center border-t border-slate-800 pt-3">
+                SENTRAL-E v2.1.0-Adf &copy; 2026
+            </div>
+        </aside>
+
+        <main class="flex-1 p-6 space-y-6 overflow-y-auto custom-scrollbar bg-[#0b1329]">
+            
+            <div class="grid grid-cols-4 gap-4">
+                <div class="bg-[#111c44] border border-slate-800 p-4 rounded-2xl relative overflow-hidden">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Kasus Masuk</span>
+                    <span id="nasional-total" class="text-2xl font-black text-white mt-1 block">0 <span class="text-xs text-slate-400 font-normal">Siswa Terdata</span></span>
+                    <div class="absolute -right-2 -bottom-2 text-5xl opacity-5">🏫</div>
+                </div>
+                <div class="bg-[#111c44] border border-slate-800 p-4 rounded-2xl relative overflow-hidden glow-red">
+                    <span class="text-[10px] font-bold text-rose-400 uppercase tracking-wider block flex items-center space-x-1">
+                        <span class="w-1.5 h-1.5 bg-rose-500 rounded-full animate-ping"></span> <span>Kasus Aktif Wilayah</span>
+                    </span>
+                    <span id="nasional-kritis" class="text-2xl font-black text-rose-500 mt-1 block">0 <span class="text-xs text-slate-400 font-normal">Siswa Berisiko</span></span>
+                    <div class="absolute -right-2 -bottom-2 text-5xl opacity-5 text-rose-500">⚠️</div>
+                </div>
+                <div class="bg-[#111c44] border border-slate-800 p-4 rounded-2xl relative overflow-hidden">
+                    <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">Menunggu Aksi Kepsek</span>
+                    <span id="nasional-proses" class="text-2xl font-black text-amber-400 mt-1 block">0 <span class="text-xs text-slate-400 font-normal">Siswa</span></span>
+                </div>
+                <div class="bg-[#111c44] border border-slate-800 p-4 rounded-2xl relative overflow-hidden">
+                    <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider block">Mitigasi Sukses (Aman)</span>
+                    <span id="nasional-aman" class="text-2xl font-black text-emerald-400 mt-1 block">0 <span class="text-xs text-slate-400 font-normal">Siswa Kembali Luring</span></span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-6">
+                
+                <div class="bg-[#111c44] border border-slate-800 p-5 rounded-2xl space-y-4">
+                    <div>
+                        <h3 class="text-xs font-black tracking-wide uppercase text-white">💰 Alokasi Anggaran Otomatis Pusat</h3>
+                        <p class="text-[11px] text-slate-400">Penyerapan BOS Afirmatif & Dana Darurat secara real-time berdasarkan pemicu EWS</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex justify-between items-center">
+                            <div>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase block">Total Pencairan Dana Terbimbing</span>
+                                <span id="dana-tercairkan" class="text-base font-mono font-bold text-emerald-400">Rp0</span>
+                            </div>
+                            <span class="text-xl">💳</span>
+                        </div>
+
+                        <div class="space-y-2">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Distribusi Logistik Pengaman Fisik:</span>
+                            <div class="grid grid-cols-2 gap-2 text-[11px]">
+                                <div class="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                                    <span class="text-slate-400 block text-[9px]">Paket Pakaian</span>
+                                    <span id="logistik-seragam" class="font-bold text-white">0 Unit</span>
+                                </div>
+                                <div class="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                                    <span class="text-slate-400 block text-[9px]">Sepeda Sekolah</span>
+                                    <span id="logistik-sepeda" class="font-bold text-white">0 Unit</span>
+                                </div>
+                                <div class="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                                    <span class="text-slate-400 block text-[9px]">Buku & Alat Tulis</span>
+                                    <span id="logistik-buku" class="font-bold text-white">0 Unit</span>
+                                </div>
+                                <div class="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                                    <span class="text-slate-400 block text-[9px]">Paket Surya Pintar</span>
+                                    <span id="logistik-surya" class="font-bold text-white">0 Unit</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-[#111c44] border border-slate-800 p-5 rounded-2xl col-span-2 space-y-4 flex flex-col justify-between">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="text-xs font-black tracking-wide uppercase text-white">📋 Arus Data Lintas Kementerian (Sisi Hilir)</h3>
+                            <p class="text-[11px] text-slate-400">Data hasil verifikasi faktual lapangan (Home Visit Valid) dari Guru BK</p>
+                        </div>
+                        <button onclick="simulasiTarikDataSekolah()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[10px] px-3 py-1.5 rounded-xl shadow-md transition flex items-center space-x-1">
+                            <span>🔄</span> <span>Tarik Sinyal Sekolah</span>
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto custom-scrollbar flex-1 mt-2">
+                        <table class="w-full text-left border-collapse text-[11px]">
+                            <thead>
+                                <tr class="border-b border-slate-800 text-slate-400 uppercase text-[9px] tracking-wider">
+                                    <th class="py-2.5 px-2">Asal Sekolah & Murid</th>
+                                    <th class="py-2.5 px-2">Akar Masalah (BK)</th>
+                                    <th class="py-2.5 px-2">Status Verifikasi</th>
+                                    <th class="py-2.5 px-2">Aksi Otomatis Hilir</th>
+                                    <th class="py-2.5 px-2 text-right">Sektor</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabel-kementerian-body" class="divide-y divide-slate-800 text-slate-300">
+                                <tr id="kementerian-empty-state">
+                                    <td colspan="5" class="text-center py-12 text-slate-500 font-mono text-xs">
+                                        📭 Membuka gerbang data... Klik "Tarik Sinyal Sekolah" untuk menyinkronkan database dengan aplikasi HP Guru.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        const mockDatabaseSekolah = [
+            { nama: "Vira", sekolah: "SDN 1 Ngada, NTT", diagnosis: "Fasilitas", status: "DIAGNOSIS_SELESAI", sektor: "KEMENKEU" },
+            { nama: "Aris", sekolah: "SDN 1 Ngada, NTT", diagnosis: "Panen", status: "DIAGNOSIS_SELESAI", sektor: "KEMENSOS" },
+            { nama: "Sandi", sekolah: "SMPN 3 Sumba, NTT", diagnosis: "Demotivasi", status: "DIAGNOSIS_SELESAI", sektor: "KEMENDIKBUD" },
+            { nama: "Eka", sekolah: "SDN 2 Flores Timur", diagnosis: "Jarak", status: "DIAGNOSIS_SELESAI", sektor: "KEMENDIKBUD" },
+            { nama: "Fitri", sekolah: "SMP Satap Alor", diagnosis: "Buku", status: "AMAN", sektor: "KEMENKEU" }
+        ];
+
+        let dataTerpilih = [];
+        let filterAktif = "ALL";
+
+        function simulasiTarikDataSekolah() {
+            const dataLokalBrowser = localStorage.getItem('sentralE_database');
+            
+            if (dataLokalBrowser) {
+                let dataRiil = JSON.parse(dataLokalBrowser);
+                
+                // Konversi data riil agar kompatibel dengan display kementerian
+                dataTerpilih = dataRiil.map(item => {
+                    let diag = item.diagnosis || "Belum Didiagnosis BK";
+                    let sektor = "KEMENDIKBUD";
+                    
+                    if (diag === "Fasilitas" || diag === "Buku") sektor = "KEMENKEU";
+                    else if (diag === "Panen") sektor = "KEMENSOS";
+                    
+                    return {
+                        nama: item.nama,
+                        sekolah: "SDN 1 Ngada, NTT (Kelas " + item.kelas + ")",
+                        diagnosis: diag,
+                        status: item.status,
+                        sektor: sektor
+                    };
+                });
+            } else {
+                dataTerpilih = [...mockDatabaseSekolah];
+            }
+            
+            const logBox = document.getElementById('live-stream-log');
+            logBox.innerHTML += `<p class="text-emerald-400">[${new Date().toLocaleTimeString()}] Sync berhasil. ${dataTerpilih.length} records termuat.</p>`;
+            logBox.scrollTop = logBox.scrollHeight;
+
+            hitungStatistikMakro();
+            renderTabelKementerian();
+            alert("Koneksi Sukses! Data intervensi EWS berhasil disinkronkan ke server pusat.");
+        }
+
+        function hitungStatistikMakro() {
+            let total = dataTerpilih.length;
+            let kritis = dataTerpilih.filter(i => i.status === "MENUNGGU_BK").length;
+            let proses = dataTerpilih.filter(i => i.status === "DIAGNOSIS_SELESAI").length;
+            let aman = dataTerpilih.filter(i => i.status === "AMAN").length;
+
+            document.getElementById('nasional-total').innerHTML = `${total} <span class="text-xs text-slate-400 font-normal">Siswa Terdata</span>`;
+            document.getElementById('nasional-kritis').innerHTML = `${kritis} <span class="text-xs text-slate-400 font-normal">Kasus Baru</span>`;
+            document.getElementById('nasional-proses').innerHTML = `${proses} <span class="text-xs text-slate-400 font-normal">Siswa Diproses</span>`;
+            document.getElementById('nasional-aman').innerHTML = `${aman} <span class="text-xs text-slate-400 font-normal">Siswa Aman</span>`;
+
+            let totalDana = 0;
+            let seragam = 0;
+            let sepeda = 0;
+            let buku = 0;
+            let surya = 0;
+
+            dataTerpilih.forEach(item => {
+                if (item.diagnosis === "Fasilitas") { totalDana += 1250000; seragam++; }
+                if (item.diagnosis === "Buku") { totalDana += 500000; buku++; }
+                if (item.diagnosis === "Jarak") { sepeda++; surya++; }
+            });
+
+            document.getElementById('dana-tercairkan').innerText = "Rp " + totalDana.toLocaleString('id-ID');
+            document.getElementById('logistik-seragam').innerText = `${seragam} Paket`;
+            document.getElementById('logistik-sepeda').innerText = `${sepeda} Unit`;
+            document.getElementById('logistik-buku').innerText = `${buku} Kotak`;
+            document.getElementById('logistik-surya').innerText = `${surya} Unit`;
+        }
+
+        function filterSektor(sektor) {
+            filterAktif = sektor;
+            renderTabelKementerian();
+        }
+
+        function renderTabelKementerian() {
+            const tbody = document.getElementById('tabel-kementerian-body');
+            tbody.innerHTML = "";
+
+            if (dataTerpilih.length === 0) {
+                tbody.innerHTML = `<tr id="kementerian-empty-state"><td colspan="5" class="text-center py-12 text-slate-500 font-mono text-xs">📭 Membuka gerbang data... Klik "Tarik Sinyal Sekolah" untuk menyinkronkan database dengan aplikasi HP Guru.</td></tr>`;
+                return;
+            }
+
+            const dataFiltered = filterAktif === "ALL" ? dataTerpilih : dataTerpilih.filter(i => i.sektor === filterAktif);
+
+            if (dataFiltered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-slate-500 font-mono text-xs">Nihil data intervensi untuk sektor ini.</td></tr>`;
+                return;
+            }
+
+            dataFiltered.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-800/60 hover:bg-slate-800/30 transition";
+
+                let kolomAksiOtomatis = "⏳ Menunggu Hasil Investigasi Lapangan Lengkap";
+                let badgeSektor = `<span class="bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded text-[10px] font-bold">KEMENDIKBUD</span>`;
+
+                if (item.diagnosis === "Fasilitas") {
+                    kolomAksiOtomatis = "💰 Pencairan BOS Afirmatif & Pemesanan Seragam UMKM Lokal";
+                    badgeSektor = `<span class="bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2 py-0.5 rounded text-[10px] font-bold">KEMENKEU</span>`;
+                } else if (item.diagnosis === "Buku") {
+                    kolomAksiOtomatis = "📚 Pengiriman Paket Buku Paket Pinjaman Jangka Panjang";
+                    badgeSektor = `<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded text-[10px] font-bold">KEMENKEU</span>`;
+                } else if (item.diagnosis === "Panen") {
+                    kolomAksiOtomatis = "🌾 Kunci DTKS: Perlindungan Bansos PKH/PIP agar Tidak Putus";
+                    badgeSektor = `<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded text-[10px] font-bold">KEMENSOS</span>`;
+                } else if (item.diagnosis === "Demotivasi") {
+                    kolomAksiOtomatis = "⚡ Monitoring Mandatori: Pendampingan Door-to-Door Mingguan";
+                    badgeSektor = `<span class="bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded text-[10px] font-bold">KEMENDIKBUD</span>`;
+                } else if (item.diagnosis === "Jarak") {
+                    kolomAksiOtomatis = "🚲 Alokasi Sepeda Darurat & Paket Tablet Luring Bertenaga Surya";
+                    badgeSektor = `<span class="bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded text-[10px] font-bold">KEMENDIKBUD</span>`;
+                }
+
+                if (item.status === 'AMAN') {
+                    kolomAksiOtomatis = "🎉 Intervensi Tuntas & Murid Kembali Sekolah";
+                }
+
+                tr.innerHTML = `
+                    <td class="py-3 px-2 font-medium text-white">${item.nama}<span class="block text-[10px] text-slate-400">${item.sekolah}</span></td>
+                    <td class="py-3 px-2 font-mono text-amber-400 text-[10px]">${item.diagnosis}</td>
+                    <td class="py-3 px-2"><span class="bg-slate-900 border border-slate-700 text-slate-300 px-2 py-0.5 rounded text-[10px] font-medium">🏠 Home Visit Valid</span></td>
+                    <td class="py-3 px-2 text-slate-400">${kolomAksiOtomatis}</td>
+                    <td class="py-3 px-2 text-right">${badgeSektor}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+</html>

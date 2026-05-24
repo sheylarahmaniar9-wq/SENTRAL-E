@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENTRAL-E - EWS Internal Sekolah 3T</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .page-content { transition: all 0.25s ease-in-out; }
+        .hidden-page { display: none; }
+        .overflow-y-auto::-webkit-scrollbar { width: 4px; }
+        .overflow-y-auto::-webkit-scrollbar-thumb { background-color: #e2e8f0; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-slate-900 font-sans antialiased min-h-screen flex justify-center items-center p-2 sm:p-4">
+
+    <div class="w-full max-w-sm bg-white rounded-[2.5rem] shadow-2xl border-[8px] border-slate-800 overflow-hidden relative" style="height: 740px;">
+        
+        <div class="bg-indigo-600 text-white px-5 pt-7 pb-3 text-center shadow-md z-10 relative">
+            <div class="flex items-center justify-center space-x-2 font-bold text-[11px] tracking-wide uppercase">
+                <span class="w-2 h-2 bg-white rounded-full animate-ping absolute opacity-75"></span>
+                <span class="w-2 h-2 bg-white rounded-full relative"></span>
+                <span>🟢 SENTRAL-E | HUB INTERNAL 3T</span>
+            </div>
+            <p class="text-[10px] text-indigo-100 mt-1 leading-tight">Sistem Mitigasi Drop-Out Terintegrasi Guru, BK & Kepsek</p>
+        </div>
+
+        <div id="page-gurumengajar" class="page-content p-5 overflow-y-auto" style="height: calc(100% - 130px);">
+            <div class="mb-4">
+                <h1 class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Input Lapangan</h1>
+                <h2 class="text-base font-black text-slate-800">Panel Guru Mengajar</h2>
+                <p class="text-[11px] text-slate-500">SDN 1 Ngada, NTT</p>
+            </div>
+
+            <div class="mb-4 bg-slate-900 text-slate-100 p-3 rounded-xl flex items-center justify-between text-[11px] border border-slate-800 shadow-sm">
+                <div class="flex items-center space-x-2">
+                    <span class="text-base">💾</span>
+                    <div>
+                        <span class="font-bold block text-indigo-400">Penyimpanan Lokal Aktif</span>
+                        <span id="sync-counter" class="text-slate-400 text-[10px]">0 Alur Perubahan Tersimpan di HP</span>
+                    </div>
+                </div>
+                <button onclick="triggerSync()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold px-2.5 py-1 rounded-md text-[10px] transition shadow-sm">Sync</button>
+            </div>
+
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3 mb-4 shadow-sm">
+                <h3 class="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center space-x-1">
+                    <span>📝</span> <span>Tambah Laporan Siswa Berisiko</span>
+                </h3>
+                
+                <div class="space-y-2">
+                    <div>
+                        <label class="text-[9px] font-bold text-slate-500 uppercase block mb-1">Nama Lengkap Murid</label>
+                        <input type="text" id="input-nama" placeholder="Contoh: Vira" class="w-full border border-slate-200 rounded-lg p-2 text-xs bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none font-medium">
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-[9px] font-bold text-slate-500 uppercase block mb-1">Kelas</label>
+                            <input type="text" id="input-kelas" placeholder="Misal: V-3" class="w-full border border-slate-200 rounded-lg p-2 text-xs bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none font-medium">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-bold text-slate-500 uppercase block mb-1">No. Absen</label>
+                            <input type="number" id="input-absen" placeholder="4" class="w-full border border-slate-200 rounded-lg p-2 text-xs bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none font-medium">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-[9px] font-bold text-slate-500 uppercase block mb-1">Indikasi/Gejala Awal Lapangan</label>
+                        <select id="input-kasus" class="w-full border border-slate-200 rounded-lg p-2 text-xs bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none font-medium">
+                            <option value="⚠️ Sering Bolos di Jam Pelajaran Tertentu">Sering Bolos di Jam Pelajaran Tertentu</option>
+                            <option value="⚠️ Alpa Berturut-turut Tanpa Kabar">Alpa Berturut-turut Tanpa Kabar</option>
+                            <option value="⚠️ Datang Terlambat dengan Kondisi Fisik Lelah">Datang Terlambat & Kondisi Fisik Lelah</option>
+                            <option value="⚠️ Perlengkapan Sekolah (Baju/Sepatu) Rusak Berat">Perlengkapan Sekolah Rusak Berat</option>
+                            <option value="⚠️ Tidak Pernah Mengumpulkan Tugas Belajar">Tidak Pernah Mengumpulkan Tugas Belajar</option>
+                            <option value="⚠️ Menarik Diri & Murung di Dalam Kelas">Menarik Diri & Murung di Kelas</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="simpanLaporanBaru()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-xl text-xs transition shadow-md flex justify-center items-center space-x-1">
+                    <span>🚀</span> <span>Kirim Sinyal Radar ke BK</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="page-gurubk" class="page-content p-5 overflow-y-auto hidden-page" style="height: calc(100% - 130px);">
+            <div class="mb-4">
+                <h1 class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Aksi Diagnostik</h1>
+                <h2 class="text-base font-black text-slate-800">Panel Bimbingan Konseling (BK)</h2>
+                <p class="text-[11px] text-slate-500">Pelacakan Akar Masalah & Verifikasi Kunjungan</p>
+            </div>
+
+            <div id="bk-container-laporan" class="space-y-3">
+                <div id="bk-empty-state" class="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-slate-400 text-xs">
+                     📭 Belum ada data eskalasi masuk.
+                </div>
+            </div>
+        </div>
+
+        <div id="page-sekolah" class="page-content p-5 overflow-y-auto hidden-page" style="height: calc(100% - 130px);">
+            <div class="mb-4">
+                <h1 class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Kebijakan & Anggaran</h1>
+                <h2 class="text-base font-black text-slate-800">Panel Kepala Sekolah</h2>
+                <p class="text-[11px] text-slate-500">Eksekusi Program Intervensi Strategis</p>
+            </div>
+
+            <div class="p-3 bg-slate-900 text-white rounded-2xl shadow-xl mb-4 flex justify-between items-center">
+                <div>
+                    <div class="text-[8px] text-slate-400 uppercase tracking-wider font-extrabold">Skor Real-Time AVI Sekolah</div>
+                    <div id="skor-avi" class="text-base font-black mt-0.5 text-emerald-400">0.0 (Aman)</div>
+                </div>
+                <div class="text-right">
+                    <div class="text-[8px] text-slate-400 uppercase tracking-wider font-extrabold">BOS Afirmatif</div>
+                    <div id="saldo-bos" class="text-xs font-bold text-emerald-400">Rp12.500.000</div>
+                </div>
+            </div>
+
+            <h3 class="text-[10px] font-bold text-slate-400 tracking-wider uppercase mb-2">Daftar Persetujuan Tindakan</h3>
+            
+            <div id="sekolah-container-tindakan" class="space-y-3">
+                <div id="sekolah-empty-state" class="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-slate-400 text-xs">
+                    ⏳ Menunggu verifikasi valid dan rekomendasi dari Guru BK.
+                </div>
+            </div>
+        </div>
+
+        <div id="page-rekapan" class="page-content p-5 overflow-y-auto hidden-page" style="height: calc(100% - 130px);">
+            <div class="mb-4">
+                <h1 class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Big Data & Evaluasi</h1>
+                <h2 class="text-base font-black text-slate-800">Dashboard Perkembangan</h2>
+                <p class="text-[11px] text-slate-500">Statistik Real-time Intervensi SENTRAL-E</p>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 mb-4">
+                <div class="bg-indigo-50 border border-indigo-100 p-2.5 rounded-xl text-center">
+                    <span class="text-[9px] font-bold text-indigo-600 block uppercase">Total Kasus</span>
+                    <span id="stat-total" class="text-base font-black text-slate-800">0</span>
+                </div>
+                <div class="bg-amber-50 border border-amber-100 p-2.5 rounded-xl text-center">
+                    <span class="text-[9px] font-bold text-amber-600 block uppercase">Proses EWS</span>
+                    <span id="stat-proses" class="text-base font-black text-slate-800">0</span>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-100 p-2.5 rounded-xl text-center">
+                    <span class="text-[9px] font-bold text-emerald-600 block uppercase">Siswa Aman</span>
+                    <span id="stat-aman" class="text-base font-black text-slate-800">0</span>
+                </div>
+            </div>
+
+            <div class="bg-slate-50 border border-slate-200 p-3 rounded-xl mb-4 space-y-2">
+                <h4 class="text-[10px] font-bold text-slate-700 uppercase tracking-wider">📊 Distribusi Diagnosis Masalah</h4>
+                <div id="chart-container" class="space-y-1.5 text-[10px]">
+                    </div>
+            </div>
+
+            <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">📜 Riwayat Kasus Sukses Dimigrasi</h4>
+            <div id="rekapan-log-container" class="space-y-2">
+                <div class="text-center py-6 text-slate-400 text-xs bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                    Belum ada riwayat penanganan kasus yang tuntas.
+                </div>
+            </div>
+        </div>
+
+        <div class="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-2 py-3 flex justify-between items-center text-slate-400 z-10">
+            <button id="nav-gurumengajar" onclick="switchPage('gurumengajar')" class="flex flex-col items-center space-y-1 text-indigo-600 font-bold transition relative w-16">
+                <span class="text-base">📋</span>
+                <span class="text-[8px] tracking-tight">Guru</span>
+            </button>
+            
+            <button id="nav-gurubk" onclick="switchPage('gurubk')" class="flex flex-col items-center space-y-1 hover:text-slate-600 transition relative w-16">
+                <span id="dot-bk" class="hidden absolute top-0 right-2 w-2 h-2 bg-rose-500 rounded-full border border-white animate-pulse"></span>
+                <span class="text-base">📢</span>
+                <span class="text-[8px] tracking-tight">Guru BK</span>
+            </button>
+            
+            <button id="nav-sekolah" onclick="switchPage('sekolah')" class="flex flex-col items-center space-y-1 hover:text-slate-600 transition relative w-16">
+                <span id="dot-sekolah" class="hidden absolute top-0 right-2 w-2 h-2 bg-rose-500 rounded-full border border-white animate-pulse"></span>
+                <span class="text-base">🏫</span>
+                <span class="text-[8px] tracking-tight">Sekolah</span>
+            </button>
+
+            <button id="nav-rekapan" onclick="switchPage('rekapan')" class="flex flex-col items-center space-y-1 hover:text-slate-600 transition relative w-16">
+                <span class="text-base">📊</span>
+                <span class="text-[8px] tracking-tight">Rekapan</span>
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        let offlineMutations = 0;
+        const PIN_BK = "1234";
+        const PIN_SEKOLAH = "5678";
+        let daftarLaporan = [];
+
+        function switchPage(pageName) {
+            if (pageName === 'gurubk') {
+                let pin = prompt("Masukkan PIN Khusus Guru BK:");
+                if (pin !== PIN_BK) { return alert("Akses Ditolak! PIN Guru BK Salah."); }
+                renderHalamanBK();
+            }
+            if (pageName === 'sekolah') {
+                let pin = prompt("Masukkan PIN Khusus Kepala Sekolah:");
+                if (pin !== PIN_SEKOLAH) { return alert("Akses Ditolak! PIN Manajemen Salah."); }
+                updateSkorAVI();
+                renderHalamanSekolah();
+            }
+            if (pageName === 'rekapan') {
+                renderHalamanRekapan();
+            }
+
+            document.getElementById('page-gurumengajar').classList.add('hidden-page');
+            document.getElementById('page-gurubk').classList.add('hidden-page');
+            document.getElementById('page-sekolah').classList.add('hidden-page');
+            document.getElementById('page-rekapan').classList.add('hidden-page');
+
+            document.getElementById('nav-gurumengajar').className = "flex flex-col items-center space-y-1 hover:text-slate-600 transition relative w-16";
+            document.getElementById('nav-gurubk').className = "flex flex-col items-center space-y-1 hover:text-slate-600 transition relative w-16";
+            document.getElementById('nav-sekolah').className = "flex flex-col items-center space-y-1 hover:text-slate-600 transition relative w-16";
+            document.getElementById('nav-rekapan').className = "flex flex-col items-center space-y-1 hover:text-slate-600 transition relative w-16";
+
+            if(pageName === 'gurumengajar') {
+                document.getElementById('page-gurumengajar').classList.remove('hidden-page');
+                document.getElementById('nav-gurumengajar').className = "flex flex-col items-center space-y-1 text-indigo-600 transition font-bold relative w-16";
+            } else if(pageName === 'gurubk') {
+                document.getElementById('page-gurubk').classList.remove('hidden-page');
+                document.getElementById('nav-gurubk').className = "flex flex-col items-center space-y-1 text-indigo-600 transition font-bold relative w-16";
+            } else if(pageName === 'sekolah') {
+                document.getElementById('page-sekolah').classList.remove('hidden-page');
+                document.getElementById('nav-sekolah').className = "flex flex-col items-center space-y-1 text-indigo-600 transition font-bold relative w-16";
+            } else if(pageName === 'rekapan') {
+                document.getElementById('page-rekapan').classList.remove('hidden-page');
+                document.getElementById('nav-rekapan').className = "flex flex-col items-center space-y-1 text-indigo-600 transition font-bold relative w-16";
+            }
+        }
+
+        function updateNotificationDots() {
+            const adaMenungguBK = daftarLaporan.some(item => item.status === "MENUNGGU_BK");
+            document.getElementById('dot-bk').className = adaMenungguBK ? "absolute top-0 right-2 w-2 h-2 bg-rose-500 rounded-full border border-white animate-pulse" : "hidden";
+
+            const adaMenungguSekolah = daftarLaporan.some(item => item.status === "DIAGNOSIS_SELESAI");
+            document.getElementById('dot-sekolah').className = adaMenungguSekolah ? "absolute top-0 right-2 w-2 h-2 bg-rose-500 rounded-full border border-white animate-pulse" : "hidden";
+        }
+
+        function simpanLaporanBaru() {
+            const nama = document.getElementById('input-nama').value.trim();
+            const kelas = document.getElementById('input-kelas').value.trim();
+            const absen = document.getElementById('input-absen').value.trim();
+            const kasus = document.getElementById('input-kasus').value;
+
+            if (!nama || !kelas || !absen) {
+                alert("Mohon isi seluruh data laporan sebelum mengirim!");
+                return;
+            }
+
+            const dataBaru = {
+                id: Date.now(),
+                nama: nama,
+                kelas: kelas,
+                absen: absen,
+                kasus: kasus,
+                status: "MENUNGGU_BK",
+                diagnosis: "",
+                homeVisitTerverifikasi: false
+            };
+
+            daftarLaporan.push(dataBaru);
+            offlineMutations++;
+
+            document.getElementById('sync-counter').innerText = `${offlineMutations} Alur Perubahan Tersimpan di HP`;
+            document.getElementById('input-nama').value = "";
+            document.getElementById('input-kelas').value = "";
+            document.getElementById('input-absen').value = "";
+
+            updateNotificationDots();
+            alert(`Sinyal Radar EWS berhasil diaktifkan untuk ${dataBaru.nama}.`);
+        }
+
+        function updateSkorAVI() {
+            const totalKasusAktif = daftarLaporan.filter(i => i.status !== "AMAN").length;
+            const skor = (totalKasusAktif * 2.5).toFixed(1);
+            const elemenAvi = document.getElementById('skor-avi');
+            
+            if (skor == 0) { elemenAvi.innerText = "0.0 (Aman)"; elemenAvi.className = "text-base font-black mt-0.5 text-emerald-400"; }
+            else if (skor < 6) { elemenAvi.innerText = `${skor} (Waspada)`; elemenAvi.className = "text-base font-black mt-0.5 text-amber-400"; }
+            else { elemenAvi.innerText = `${skor} (Kritis)`; elemenAvi.className = "text-base font-black mt-0.5 text-rose-500"; }
+        }
+
+        function renderHalamanBK() {
+            const container = document.getElementById('bk-container-laporan');
+            container.innerHTML = "";
+
+            const laporanAktif = daftarLaporan.filter(item => item.status === "MENUNGGU_BK");
+
+            if (laporanAktif.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-slate-400 text-xs">📭 Belum ada data eskalasi masuk.</div>`;
+                return;
+            }
+
+            laporanAktif.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "p-4 bg-amber-50 border border-amber-200 rounded-2xl space-y-3 shadow-sm";
+                card.innerHTML = `
+                    <div class="flex justify-between items-center"><span class="text-[9px] font-bold bg-amber-600 text-white px-2 py-0.5 rounded uppercase">E1 — Analisis Kasus</span><span class="text-[10px] text-slate-600 font-bold">Kelas: ${item.kelas}</span></div>
+                    <div><h3 class="text-xs font-black text-slate-800">Siswa: ${item.nama}</h3><p class="text-[10px] text-slate-600 mt-0.5">${item.kasus}</p></div>
+                    
+                    <div class="bg-white p-3 rounded-xl border border-amber-200 space-y-2">
+                        <label class="text-[9px] font-bold text-slate-500 block uppercase">Faktor Alasan Utama Hasil Pelacakan:</label>
+                        <select id="select-diag-${item.id}" class="w-full border border-slate-200 rounded-lg p-2 text-xs bg-slate-50 font-medium focus:outline-none">
+                            <option value="Demotivasi">Faktor Demotivasi Internal Siswa (Malas / Ikut Lingkungan Luar)</option>
+                            <option value="Panen">Membantu Orang Tua Panen Kebun/Sawah (Ekonomi Musiman)</option>
+                            <option value="Fasilitas">Fasilitas Rusak Berat (Seragam Kumal/Sepatu Rusak Total)</option>
+                            <option value="Buku">Ketiadaan Buku Pelajaran & Alat Tulis (Hambatan Belajar Mandiri)</option>
+                            <option value="Jarak">Kendala Geografis (Jarak Rumah Jalur Ekstrem/Akses Jalan Rusak)</option>
+                            <option value="Bullying">Masalah Sosial (Menjadi Korban Bullying/Intimidasi Antar Teman)</option>
+                        </select>
+                    </div>
+
+                    <div class="p-2.5 bg-white border border-amber-300 rounded-xl flex items-center space-x-2">
+                        <input type="checkbox" id="check-visit-${item.id}" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4" onchange="toggleVisitStatus(${item.id})">
+                        <label for="check-visit-${item.id}" class="text-[10px] font-bold text-slate-700 uppercase leading-none">Konfirmasi Saya Sudah Melakukan Kunjungan Rumah</label>
+                    </div>
+
+                    <button onclick="submitDiagnosisBK(${item.id})" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 rounded-xl text-xs transition shadow-sm">Kunci & Teruskan Kebijakan</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function toggleVisitStatus(id) {
+            const item = daftarLaporan.find(l => l.id === id);
+            if (item) { item.homeVisitTerverifikasi = document.getElementById(`check-visit-${id}`).checked; }
+        }
+
+        function submitDiagnosisBK(id) {
+            const item = daftarLaporan.find(l => l.id === id);
+            if (!item) return;
+
+            if (!item.homeVisitTerverifikasi) {
+                alert("🚨 PERINGATAN: Berdasarkan alur sistem SENTRAL-E, Guru BK wajib memberikan verifikasi bahwa Kunjungan Rumah (Home Visit) telah selesai dilaksanakan sebelum mengunci data!");
+                return;
+            }
+
+            item.diagnosis = document.getElementById(`select-diag-${id}`).value;
+            item.status = "DIAGNOSIS_SELESAI";
+            offlineMutations++;
+            
+            updateNotificationDots();
+            renderHalamanBK();
+            alert(`Sinyal hasil investigasi lapangan ${item.nama} berhasil diteruskan ke Manajemen Sekolah.`);
+        }
+
+        function renderHalamanSekolah() {
+            const container = document.getElementById('sekolah-container-tindakan');
+            container.innerHTML = "";
+
+            const laporanButuhPersetujuan = daftarLaporan.filter(item => item.status === "DIAGNOSIS_SELESAI");
+
+            if (laporanButuhPersetujuan.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-slate-400 text-xs">⏳ Menunggu rekomendasi investigasi Guru BK.</div>`;
+                return;
+            }
+
+            laporanButuhPersetujuan.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3";
+                
+                let detailHilirHTML = "";
+                let badgeTipe = "";
+
+                if(item.diagnosis === "Demotivasi") {
+                    badgeTipe = `<span class="text-[9px] font-bold bg-cyan-600 text-white px-2 py-0.5 rounded uppercase">Kebijakan Non-Anggaran</span>`;
+                    detailHilirHTML = `<div class="p-2.5 bg-cyan-950 border border-cyan-800 text-cyan-200 rounded-xl text-[10px] space-y-1"><div class="font-bold text-cyan-400">⚡ PROGRAM EVALUASI INTERNAL BK</div><div>• Kartu monitoring kehadiran mingguan siswa aktif.</div><div>• Konseling individu intensif 2x seminggu.</div></div>`;
+                } else if(item.diagnosis === "Panen") {
+                    badgeTipe = `<span class="text-[9px] font-bold bg-amber-600 text-white px-2 py-0.5 rounded uppercase">Edukasi Sinergi</span>`;
+                    detailHilirHTML = `<div class="p-2.5 bg-amber-950 border border-amber-800 text-amber-200 rounded-xl text-[10px] space-y-1"><div class="font-bold text-amber-400">🌾 ADAPTASI KALENDER AKADEMIK</div><div>• Kontrak belajar mandiri luring saat panen raya.</div><div>• Sinkronisasi Kemensos agar bansos PKH tetap aman.</div></div>`;
+                } else if(item.diagnosis === "Fasilitas") {
+                    badgeTipe = `<span class="text-[9px] font-bold bg-rose-600 text-white px-2 py-0.5 rounded uppercase">Alokasi Anggaran BOS</span>`;
+                    detailHilirHTML = `<div class="p-2.5 bg-rose-950 border border-rose-900 text-rose-200 rounded-xl text-[10px] space-y-1"><div class="font-bold text-rose-400">👕 DISTRIBUSI LOGISTIK UTAMA</div><div>• Alokasi Rp1.250.000 untuk Paket Seragam & Sepatu Baru.</div></div>`;
+                } else if(item.diagnosis === "Buku") {
+                    badgeTipe = `<span class="text-[9px] font-bold bg-emerald-600 text-white px-2 py-0.5 rounded uppercase">Alokasi Perpustakaan</span>`;
+                    detailHilirHTML = `<div class="p-2.5 bg-emerald-950 border border-emerald-900 text-emerald-200 rounded-xl text-[10px] space-y-1"><div class="font-bold text-emerald-400">📚 DANA BANTUAN LITERASI</div><div>• Subsidi penuh alat tulis & Paket Buku Paket Pinjaman.</div></div>`;
+                } else if(item.diagnosis === "Jarak") {
+                    badgeTipe = `<span class="text-[9px] font-bold bg-indigo-600 text-white px-2 py-0.5 rounded uppercase">Skenario Inovasi</span>`;
+                    detailHilirHTML = `<div class="p-2.5 bg-indigo-950 border border-indigo-900 text-indigo-200 rounded-xl text-[10px] space-y-1"><div class="font-bold text-indigo-400">🚲 BANTUAN MOBILITAS GEOGRAFIS</div><div>• Inventarisasi Sepeda Sekolah & Pengusul Tablet Pintar Surya.</div></div>`;
+                } else if(item.diagnosis === "Bullying") {
+                    badgeTipe = `<span class="text-[9px] font-bold bg-violet-600 text-white px-2 py-0.5 rounded uppercase">Respons Sosial</span>`;
+                    detailHilirHTML = `<div class="p-2.5 bg-violet-950 border border-violet-900 text-violet-200 rounded-xl text-[10px] space-y-1"><div class="font-bold text-violet-400">🛡️ SATGAS ANTI-PERUNDUNGAN</div><div>• Mediasi orang tua & Deklarasi ruang aman ramah anak.</div></div>`;
+                }
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center">${badgeTipe}<span class="text-[9px] font-bold text-slate-500 bg-white border border-slate-200 px-1 rounded">🏠 Home Visit Valid</span></div>
+                    <div class="text-xs font-black text-slate-800">Siswa: ${item.nama} (Kelas ${item.kelas})</div>
+                    <div class="space-y-2">${detailHilirHTML}</div>
+                    <button onclick="approveBantuanSekolah(${item.id})" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-xl text-xs shadow transition">
+                        ✔ Sahkan & Eksekusi Langkah Penanganan
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function approveBantuanSekolah(id) {
+            const item = daftarLaporan.find(l => l.id === id);
+            if (!item) return;
+
+            if (item.diagnosis === "Fasilitas" || item.diagnosis === "Buku" || item.diagnosis === "Jarak") {
+                const saldoElemen = document.getElementById('saldo-bos');
+                let saldoSekarang = parseInt(saldoElemen.innerText.replace(/[^0-9]/g, ''));
+                saldoElemen.innerText = "Rp" + (saldoSekarang - 1250000).toLocaleString('id-ID');
+            }
+
+            item.status = "AMAN";
+            offlineMutations++;
+            
+            updateNotificationDots();
+            updateSkorAVI();
+            renderHalamanSekolah();
+            alert(`Kebijakan disahkan! Status ${item.nama} kini dinyatakan AMAN.`);
+        }
+
+        // LOGIKA PENYAJIAN DATA PADA HALAMAN REKAPAN
+        function renderHalamanRekapan() {
+            const total = daftarLaporan.length;
+            const proses = daftarLaporan.filter(i => i.status !== "AMAN").length;
+            const aman = daftarLaporan.filter(i => i.status === "AMAN").length;
+
+            document.getElementById('stat-total').innerText = total;
+            document.getElementById('stat-proses').innerText = proses;
+            document.getElementById('stat-aman').innerText = aman;
+
+            // Hitung Distribusi Diagnosis secara Real-time
+            const counter = { Demotivasi: 0, Panen: 0, Fasilitas: 0, Buku: 0, Jarak: 0, Bullying: 0 };
+            daftarLaporan.forEach(i => { if(i.diagnosis && counter[i.diagnosis] !== undefined) counter[i.diagnosis]++; });
+
+            const chartContainer = document.getElementById('chart-container');
+            chartContainer.innerHTML = "";
+
+            const labels = {
+                Demotivasi: "🔴 Faktor Internal / Demotivasi",
+                Panen: "🌾 Faktor Ekonomi Musiman",
+                Fasilitas: "👕 Perlengkapan Rusak Berat",
+                Buku: "📚 Ketiadaan Buku & Alat Tulis",
+                Jarak: "🚲 Akses Jarak Geografis",
+                Bullying: "🛡️ Kasus Bullying / Sosial"
+            };
+
+            Object.keys(counter).forEach(key => {
+                const count = counter[key];
+                // Hitung persen panjang bar
+                const percent = total > 0 ? (count / total) * 100 : 0;
+                
+                const barRow = document.createElement('div');
+                barRow.className = "space-y-1";
+                barRow.innerHTML = `
+                    <div class="flex justify-between font-semibold text-slate-700">
+                        <span>${labels[key]}</span>
+                        <span class="font-bold">${count} Anak</span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div class="bg-indigo-600 h-2 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
+                    </div>
+                `;
+                chartContainer.appendChild(barRow);
+            });
+
+            // Render Log Historis Siswa yang sukses dimitigasi
+            const logContainer = document.getElementById('rekapan-log-container');
+            logContainer.innerHTML = "";
+
+            const siswaAman = daftarLaporan.filter(i => i.status === "AMAN");
+
+            if(siswaAman.length === 0) {
+                logContainer.innerHTML = `<div class="text-center py-6 text-slate-400 text-xs bg-slate-50 rounded-xl border border-dashed border-slate-200">Belum ada riwayat penanganan kasus yang tuntas.</div>`;
+                return;
+            }
+
+            siswaAman.forEach(item => {
+                const logCard = document.createElement('div');
+                logCard.className = "p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-[11px] space-y-1 shadow-sm";
+                logCard.innerHTML = `
+                    <div class="flex justify-between items-center font-bold text-slate-800">
+                        <span>🎉 ${item.nama} (Kelas ${item.kelas})</span>
+                        <span class="text-emerald-600 uppercase text-[9px] bg-white border border-emerald-300 px-1.5 py-0.5 rounded">Berhasil Amitigasi</span>
+                    </div>
+                    <p class="text-slate-600">Akar Masalah: <span class="font-semibold text-slate-700">${item.diagnosis}</span></p>
+                    <p class="text-[10px] text-slate-500 leading-tight">• Kasus ditutup setelah *Home Visit* divalidasi dan intervensi kementerian ditrigger oleh Kepala Sekolah.</p>
+                `;
+                logContainer.appendChild(logCard);
+            });
+        }
+
+        function triggerSync() {
+    if(offlineMutations === 0 && daftarLaporan.length === 0) { 
+        return alert("Seluruh data pelacakan internal sekolah sudah sinkron."); 
+    }
+    // Menyimpan data riil dari HP ke memori browser agar bisa dibaca file lain
+    localStorage.setItem('sentralE_database', JSON.stringify(daftarLaporan));
+    
+    alert(`Menghubungkan ke pusat... Berhasil menyinkronkan ${daftarLaporan.length} data perubahan ke Pusat Proses SENTRAL-E Nasional.`);
+    offlineMutations = 0;
+    document.getElementById('sync-counter').innerText = "Semua data sinkron (0 tertunda)";
+}
+    </script>
+</body>
+</html>
